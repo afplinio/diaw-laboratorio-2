@@ -1,0 +1,32 @@
+@startuml pacotes
+title Diagrama de Pacotes - Visão Lógica (v1)
+skinparam shadowing false
+
+package "Construção dinâmica das páginas web (React + Vite)" as Web {
+  package "pages" as WPages {
+  }
+  package "api" as WApi {
+  }
+  WPages ..> WApi
+}
+
+package "Gestão de pedidos e contratos (Spring Boot)" as Backend {
+  package "controller" as Controller {
+  }
+  package "service" as Service {
+  }
+  package "repository" as Repository {
+  }
+  package "model" as Model {
+  }
+  Controller ..> Service
+  Service ..> Repository
+  Service ..> Model
+  Repository ..> Model
+}
+
+database "Supabase (PostgreSQL)" as Banco
+
+WApi ..> Controller : HTTP / JSON
+Repository ..> Banco : JDBC
+@enduml
