@@ -8,6 +8,7 @@ import br.pucminas.diaw.aluguel.model.Agente;
 import br.pucminas.diaw.aluguel.model.Automovel;
 import br.pucminas.diaw.aluguel.repository.AgenteRepository;
 import br.pucminas.diaw.aluguel.repository.AutomovelRepository;
+import br.pucminas.diaw.aluguel.repository.PedidoAluguelRepository;
 import java.time.Year;
 import java.util.List;
 import org.springframework.security.access.AccessDeniedException;
@@ -19,10 +20,13 @@ public class AutomovelService {
 
     private final AutomovelRepository automovelRepository;
     private final AgenteRepository agenteRepository;
+    private final PedidoAluguelRepository pedidoRepository;
 
-    public AutomovelService(AutomovelRepository automovelRepository, AgenteRepository agenteRepository) {
+    public AutomovelService(AutomovelRepository automovelRepository, AgenteRepository agenteRepository,
+                            PedidoAluguelRepository pedidoRepository) {
         this.automovelRepository = automovelRepository;
         this.agenteRepository = agenteRepository;
+        this.pedidoRepository = pedidoRepository;
     }
 
     @Transactional
@@ -71,6 +75,9 @@ public class AutomovelService {
     @Transactional
     public void excluir(Long id, Long agenteId) {
         Automovel automovel = obterDoProprietario(id, agenteId);
+        if (pedidoRepository.existsByAutomovelId(id)) {
+            throw new RegraNegocioException("Não é possível excluir um automóvel com pedidos registrados");
+        }
         automovelRepository.delete(automovel);
     }
 

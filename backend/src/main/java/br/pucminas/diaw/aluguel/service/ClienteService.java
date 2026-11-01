@@ -7,7 +7,9 @@ import br.pucminas.diaw.aluguel.dto.RendimentoDto;
 import br.pucminas.diaw.aluguel.exception.RecursoNaoEncontradoException;
 import br.pucminas.diaw.aluguel.exception.RegraNegocioException;
 import br.pucminas.diaw.aluguel.model.Cliente;
+import br.pucminas.diaw.aluguel.repository.AutomovelRepository;
 import br.pucminas.diaw.aluguel.repository.ClienteRepository;
+import br.pucminas.diaw.aluguel.repository.PedidoAluguelRepository;
 import br.pucminas.diaw.aluguel.repository.UsuarioRepository;
 import br.pucminas.diaw.aluguel.security.UsuarioAutenticado;
 import java.util.List;
@@ -21,12 +23,17 @@ public class ClienteService {
 
     private final ClienteRepository clienteRepository;
     private final UsuarioRepository usuarioRepository;
+    private final PedidoAluguelRepository pedidoRepository;
+    private final AutomovelRepository automovelRepository;
     private final PasswordEncoder passwordEncoder;
 
     public ClienteService(ClienteRepository clienteRepository, UsuarioRepository usuarioRepository,
+                          PedidoAluguelRepository pedidoRepository, AutomovelRepository automovelRepository,
                           PasswordEncoder passwordEncoder) {
         this.clienteRepository = clienteRepository;
         this.usuarioRepository = usuarioRepository;
+        this.pedidoRepository = pedidoRepository;
+        this.automovelRepository = automovelRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -87,6 +94,9 @@ public class ClienteService {
     public void excluir(Long id, UsuarioAutenticado usuario) {
         exigirProprioCliente(id, usuario);
         Cliente cliente = obter(id);
+        if (pedidoRepository.existsByClienteId(id) || automovelRepository.existsByProprietarioId(id)) {
+            throw new RegraNegocioException("Não é possível excluir um cliente com pedidos ou automóveis registrados");
+        }
         clienteRepository.delete(cliente);
     }
 
