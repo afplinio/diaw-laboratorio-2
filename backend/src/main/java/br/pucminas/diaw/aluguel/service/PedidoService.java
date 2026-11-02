@@ -1,13 +1,16 @@
 package br.pucminas.diaw.aluguel.service;
 
+import br.pucminas.diaw.aluguel.dto.AvaliacaoRequest;
 import br.pucminas.diaw.aluguel.dto.PedidoRequest;
 import br.pucminas.diaw.aluguel.dto.PedidoResponse;
 import br.pucminas.diaw.aluguel.exception.RecursoNaoEncontradoException;
 import br.pucminas.diaw.aluguel.exception.RegraNegocioException;
+import br.pucminas.diaw.aluguel.model.Agente;
 import br.pucminas.diaw.aluguel.model.Automovel;
 import br.pucminas.diaw.aluguel.model.Cliente;
 import br.pucminas.diaw.aluguel.model.PedidoAluguel;
 import br.pucminas.diaw.aluguel.model.StatusPedido;
+import br.pucminas.diaw.aluguel.repository.AgenteRepository;
 import br.pucminas.diaw.aluguel.repository.AutomovelRepository;
 import br.pucminas.diaw.aluguel.repository.ClienteRepository;
 import br.pucminas.diaw.aluguel.repository.PedidoAluguelRepository;
@@ -22,12 +25,14 @@ public class PedidoService {
 
     private final PedidoAluguelRepository pedidoRepository;
     private final ClienteRepository clienteRepository;
+    private final AgenteRepository agenteRepository;
     private final AutomovelRepository automovelRepository;
 
     public PedidoService(PedidoAluguelRepository pedidoRepository, ClienteRepository clienteRepository,
-                         AutomovelRepository automovelRepository) {
+                         AgenteRepository agenteRepository, AutomovelRepository automovelRepository) {
         this.pedidoRepository = pedidoRepository;
         this.clienteRepository = clienteRepository;
+        this.agenteRepository = agenteRepository;
         this.automovelRepository = automovelRepository;
     }
 
@@ -86,6 +91,18 @@ public class PedidoService {
             throw new RegraNegocioException("Este pedido não pode mais ser cancelado");
         }
         pedido.cancelar();
+        return PedidoResponse.de(pedido);
+    }
+
+    @Transactional
+    public PedidoResponse avaliar(Long id, AvaliacaoRequest request, Long agenteId) {
+        PedidoAluguel pedido = obter(id);
+        if (pedido.getStatus() != StatusPedido.EM_ANALISE) {
+            throw new RegraNegocioException("Somente pedidos em análise podem ser avaliados");
+        }
+        Agente agente = agenteRepository.findById(agenteId)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Agente não encontrado"));
+        pedido.avaliar(agente, request.aprovado(), request.parecer().trim());
         return PedidoResponse.de(pedido);
     }
 

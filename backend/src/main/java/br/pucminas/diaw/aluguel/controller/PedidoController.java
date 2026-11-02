@@ -1,5 +1,6 @@
 package br.pucminas.diaw.aluguel.controller;
 
+import br.pucminas.diaw.aluguel.dto.AvaliacaoRequest;
 import br.pucminas.diaw.aluguel.dto.PedidoRequest;
 import br.pucminas.diaw.aluguel.dto.PedidoResponse;
 import br.pucminas.diaw.aluguel.model.StatusPedido;
@@ -59,5 +60,12 @@ public class PedidoController {
     @PreAuthorize("hasRole('CLIENTE')")
     public PedidoResponse cancelar(@PathVariable Long id, @AuthenticationPrincipal UsuarioAutenticado usuario) {
         return pedidoService.cancelar(id, usuario.id());
+    }
+
+    @PostMapping("/{id}/avaliacao")
+    @PreAuthorize("hasRole('AGENTE')")
+    public PedidoResponse avaliar(@PathVariable Long id, @Valid @RequestBody AvaliacaoRequest request,
+                                  @AuthenticationPrincipal UsuarioAutenticado usuario) {
+        return pedidoService.avaliar(id, request, usuario.id());
     }
 }
