@@ -1,0 +1,47 @@
+@startuml casos-de-uso
+title Diagrama de Casos de Uso (v2)
+left to right direction
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+actor "Visitante" as Visitante
+actor "Usuário" as Usuario
+actor "Cliente" as Cliente
+actor "Agente\n(empresa ou banco)" as Agente
+
+Usuario <|-- Cliente
+Usuario <|-- Agente
+
+rectangle "Sistema de Aluguel de Carros" {
+  usecase "Cadastrar-se" as UC1
+  usecase "Fazer login" as UC2
+  usecase "Consultar contratos" as UC3
+  usecase "Manter dados pessoais" as UC4
+  usecase "Introduzir pedido" as UC5
+  usecase "Consultar pedidos" as UC6
+  usecase "Modificar pedido" as UC7
+  usecase "Cancelar pedido" as UC8
+  usecase "Consultar clientes" as UC9
+  usecase "Avaliar pedido" as UC10
+  usecase "Executar contrato" as UC11
+  usecase "Associar contrato de crédito" as UC12
+  usecase "Registrar propriedade do automóvel" as UC13
+  usecase "Manter automóveis" as UC14
+}
+
+Visitante --> UC1
+Usuario --> UC2
+Usuario --> UC3
+Usuario --> UC6
+Cliente --> UC4
+Cliente --> UC5
+Cliente --> UC7
+Cliente --> UC8
+Agente --> UC7
+Agente --> UC9
+Agente --> UC10
+Agente --> UC11
+Agente --> UC14
+UC11 ..> UC13 : <<include>>
+UC12 .up.> UC11 : <<extend>>
+@enduml

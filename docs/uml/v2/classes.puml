@@ -1,0 +1,114 @@
+@startuml classes
+title Diagrama de Classes (v2) - pacote model
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide empty members
+
+abstract class Usuario {
+  -id: Long
+  -login: String
+  -senhaHash: String
+  +{abstract} getPapel(): Papel
+  +{abstract} getNome(): String
+  +{abstract} getTipoProprietario(): TipoProprietario
+}
+class Cliente {
+  +{static} MAX_RENDIMENTOS: int = 3
+  -rg: String
+  -cpf: String
+  -nome: String
+  -endereco: String
+  -profissao: String
+  +atualizarDados(rg, cpf, nome, endereco, profissao): void
+  +definirRendimentos(novos: List<Rendimento>): void
+  +getRendaTotal(): BigDecimal
+}
+class Rendimento {
+  -id: Long
+  -entidadeEmpregadora: String
+  -valor: BigDecimal
+}
+class Agente {
+  -nome: String
+  -cnpj: String
+  -tipo: TipoAgente
+  +isBanco(): boolean
+}
+class Automovel {
+  -id: Long
+  -matricula: String
+  -ano: Integer
+  -marca: String
+  -modelo: String
+  -placa: String
+  +atualizarDados(matricula, ano, marca, modelo, placa): void
+  +registrarProprietario(proprietario: Usuario): void
+  +isDisponivelParaAluguel(): boolean
+}
+class PedidoAluguel {
+  -id: Long
+  -dataInicio: LocalDate
+  -dataFim: LocalDate
+  -valorProposto: BigDecimal
+  -observacoes: String
+  -status: StatusPedido
+  -parecerFinanceiro: String
+  -criadoEm: Instant
+  -avaliadoEm: Instant
+  -versao: Long
+  +modificar(automovel, dataInicio, dataFim, valorProposto, observacoes): void
+  +avaliar(avaliador: Agente, aprovado: boolean, parecerFinanceiro: String): void
+  +cancelar(): void
+  +marcarContratado(): void
+  +pertenceAoCliente(clienteId: Long): boolean
+}
+class ContratoAluguel {
+  -id: Long
+  -tipoProprietario: TipoProprietario
+  -assinadoEm: Instant
+}
+class ContratoCredito {
+  -id: Long
+  -valor: BigDecimal
+  -taxaJurosMensal: BigDecimal
+  -parcelas: Integer
+}
+enum Papel {
+  CLIENTE
+  AGENTE
+}
+enum TipoAgente {
+  EMPRESA
+  BANCO
+}
+enum TipoProprietario {
+  CLIENTE
+  EMPRESA
+  BANCO
+}
+enum StatusPedido {
+  EM_ANALISE
+  APROVADO
+  REPROVADO
+  CANCELADO
+  CONTRATADO
+}
+
+Usuario <|-- Cliente
+Usuario <|-- Agente
+Usuario ..> Papel
+Usuario ..> TipoProprietario
+Agente --> "1" TipoAgente : tipo
+Cliente "1" *-- "0..3" Rendimento : rendimentos
+Automovel "0..*" --> "1" Usuario : proprietario
+PedidoAluguel "0..*" --> "1" Cliente : cliente
+PedidoAluguel "0..*" --> "1" Automovel : automovel
+PedidoAluguel "0..*" --> "0..1" Agente : avaliador
+PedidoAluguel --> "1" StatusPedido : status
+ContratoAluguel "0..1" --> "1" PedidoAluguel : pedido
+ContratoAluguel "0..*" --> "1" Agente : agente
+ContratoAluguel "0..*" --> "1" Usuario : proprietario
+ContratoAluguel "0..1" *-- "0..1" ContratoCredito : contratoCredito
+ContratoAluguel --> "1" TipoProprietario : tipoProprietario
+ContratoCredito "0..*" --> "1" Agente : banco
+@enduml

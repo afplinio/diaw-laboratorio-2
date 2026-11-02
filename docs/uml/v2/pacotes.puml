@@ -1,0 +1,58 @@
+@startuml pacotes
+title Diagrama de Pacotes - Visão Lógica (v2)
+skinparam shadowing false
+
+package "Construção dinâmica das páginas web (frontend - React + Vite)" as Web {
+  package "pages" as WPages {
+  }
+  package "components" as WComponents {
+  }
+  package "context" as WContext {
+  }
+  package "api" as WApi {
+  }
+  WPages ..> WComponents
+  WPages ..> WContext
+  WPages ..> WApi
+  WComponents ..> WContext
+  WComponents ..> WApi
+  WContext ..> WApi
+}
+
+package "Gestão de pedidos e contratos (backend - Spring Boot, MVC)" as Backend {
+  package "controller\n(Controller)" as Controller {
+  }
+  package "service\n(regras de negócio)" as Service {
+  }
+  package "repository\n(acesso a dados)" as Repository {
+  }
+  package "model\n(Model)" as Model {
+  }
+  package "dto\n(contratos da API)" as Dto {
+  }
+  package "security\n(login e JWT)" as Security {
+  }
+  package "exception\n(erros da API)" as Exception {
+  }
+
+  Controller ..> Service
+  Controller ..> Dto
+  Controller ..> Security
+  Controller ..> Model
+  Service ..> Repository
+  Service ..> Model
+  Service ..> Dto
+  Service ..> Security
+  Service ..> Exception
+  Repository ..> Model
+  Dto ..> Model
+  Security ..> Repository
+  Security ..> Model
+  Exception ..> Dto
+}
+
+database "Supabase (PostgreSQL)" as Banco
+
+WApi ..> Controller : HTTP / JSON + JWT
+Repository ..> Banco : JPA / JDBC
+@enduml
