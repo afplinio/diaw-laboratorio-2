@@ -60,7 +60,7 @@ h2 { margin: 0; font-size: 1.1rem; }
 
 /* Superfícies */
 .cartao { background: var(--superficie); border: 1px solid var(--borda); border-radius: var(--raio); padding: 20px; }
-.tabela-rolagem { padding: 0; overflow-x: auto; }
+.tabela-rolagem { position: relative; padding: 0; overflow-x: auto; }
 .vazio { padding: 40px 16px; text-align: center; color: var(--texto-suave); display: grid; gap: 4px; }
 .vazio strong { color: var(--texto); }
 
