@@ -38,10 +38,26 @@
 - [Funcionalidades Principais](#-funcionalidades-principais)
 - [Tecnologias Utilizadas](#-tecnologias-utilizadas)
 - [Arquitetura](#-arquitetura)
+  - [Diagramas](#diagramas-v2)
 - [Instalação e Execução](#-instalação-e-execução)
+  - [Pré-requisitos](#pré-requisitos)
+  - [Variáveis de Ambiente](#-variáveis-de-ambiente)
+    - [1 Back-end (Spring Boot)](#1-back-end-spring-boot)
+    - [2 Front-end (React, Vite)](#2-front-end-react-vite)
+  - [Instalação de Dependências](#-instalação-de-dependências)
+    - [Front-end (React)](#front-end-react)
+    - [Back-end (Spring Boot)](#back-end-spring-boot)
+  - [Inicialização do Banco de Dados (PostgreSQL)](#-inicialização-do-banco-de-dados-postgresql)
+  - [Como Executar a Aplicação](#-como-executar-a-aplicação)
+    - [Terminal 1: Back-end (Spring Boot)](#terminal-1-back-end-spring-boot)
+    - [Terminal 2: Front-end (React, Vite)](#terminal-2-front-end-react-vite)
+  - [Primeiro uso](#-primeiro-uso)
+- [Deploy](#-deploy)
 - [API](#-api)
 - [Estrutura de Pastas](#-estrutura-de-pastas)
 - [Demonstração](#-demonstração)
+  - [Aplicação Web](#-aplicação-web)
+  - [Exemplo de Saída no Terminal](#-exemplo-de-saída-no-terminal)
 - [Testes](#-testes)
 - [Documentações utilizadas](#-documentações-utilizadas)
 - [Autores](#-autores)
@@ -53,6 +69,7 @@
 
 ## 🔗 Links Úteis
 
+- 🌐 **Demo Online:** não há versão publicada. A aplicação é executada localmente, conforme a seção [Como Executar a Aplicação](#-como-executar-a-aplicação).
 - 📖 **Histórias de usuário:** [`docs/historias-de-usuario.md`](docs/historias-de-usuario.md)
 - 📐 **Modelos UML, versões e modificações:** [`docs/uml/README.md`](docs/uml/README.md)
 
@@ -112,6 +129,12 @@ Na execução do contrato, o automóvel pode ser registrado como propriedade do 
 - **Autenticação:** Spring Security, JWT e BCrypt
 - **Testes:** JUnit 5, MockMvc e H2
 
+### ⚙️ Infraestrutura & DevOps
+
+- **Banco de dados em nuvem:** Supabase
+- **Migrações:** Flyway
+- **Containerização, orquestração e CI/CD:** não utilizados neste protótipo
+
 ---
 
 ## 🏗 Arquitetura
@@ -122,6 +145,8 @@ O sistema é uma aplicação cliente-servidor dividida nos dois subsistemas pedi
 - **Gestão de pedidos e contratos (`backend`):** API em Spring Boot com a arquitetura MVC e as regras de negócio.
 
 No MVC, o `model` guarda as entidades, os `controller` recebem as requisições e o React atua como a camada de visão. A camada `service` concentra as regras, e `repository` faz o acesso ao banco. Os `dto` separam a API das entidades, o que impede, por exemplo, a exposição do hash da senha.
+
+Os principais padrões adotados são **MVC**, **Service Layer**, **Repository** e **DTO**.
 
 ```mermaid
 flowchart LR
@@ -159,7 +184,9 @@ As versões anteriores e a comparação entre os modelos estão em [`docs/uml/RE
 - **Node.js:** versão 24 (LTS) e npm
 - **Supabase:** um projeto próprio
 
-O Maven não precisa ser instalado, pois o repositório inclui o Maven Wrapper (`./mvnw`).
+O Maven não precisa ser instalado, pois o repositório inclui o Maven Wrapper (`./mvnw`). O Docker não é necessário para executar a aplicação.
+
+---
 
 ### 🔑 Variáveis de Ambiente
 
@@ -189,21 +216,42 @@ No Supabase, os dados de conexão ficam em **Connect > Direct > Session pooler >
 
 Nenhuma configuração é necessária em desenvolvimento, pois o Vite encaminha `/api` para `http://localhost:8080`. Se o back-end estiver em outro endereço, defina `VITE_API_URL` em `frontend/.env` (veja `frontend/.env.example`).
 
+---
+
 ### 📦 Instalação de Dependências
+
+Clone o repositório:
 
 ```bash
 git clone https://github.com/afplinio/diaw-laboratorio-2.git
 cd diaw-laboratorio-2
-cd frontend && npm install && cd ..
 ```
 
-O Maven Wrapper baixa as dependências do back-end na primeira execução.
+#### Front-end (React)
 
-### 💾 Inicialização do Banco de Dados
+```bash
+cd frontend
+npm install
+cd ..
+```
 
-Nenhum script manual é necessário. Ao iniciar, o back-end aplica as migrações de `backend/src/main/resources/db/migration` no Supabase.
+#### Back-end (Spring Boot)
 
-### ▶️ Como Executar a Aplicação
+```bash
+cd backend
+./mvnw clean install
+cd ..
+```
+
+---
+
+### 💾 Inicialização do Banco de Dados (PostgreSQL)
+
+O banco é um PostgreSQL gerenciado pelo Supabase, portanto não é preciso criar um container local. Nenhum script manual é necessário: ao iniciar, o back-end aplica as migrações de `backend/src/main/resources/db/migration`.
+
+---
+
+### ⚡ Como Executar a Aplicação
 
 #### Terminal 1: Back-end (Spring Boot)
 
@@ -221,12 +269,49 @@ npm run dev
 
 Acesse **http://localhost:5173**.
 
+> [!NOTE]
+> O projeto não usa Docker Compose, pois o banco de dados fica no Supabase.
+
+---
+
 ### 🧭 Primeiro uso
 
 1. Cadastre um agente do tipo **Empresa** e cadastre um automóvel.
 2. Cadastre um **Cliente** e crie um pedido.
 3. Entre como agente, avalie o pedido e execute o contrato.
 4. Para testar o crédito, cadastre também um agente do tipo **Banco**.
+
+---
+
+## 🚀 Deploy
+
+A aplicação não está publicada. Os passos abaixo geram e executam os artefatos de produção localmente.
+
+1. **Build do projeto:**
+
+```bash
+# Front-end: gera os arquivos estáticos em frontend/dist
+cd frontend
+VITE_API_URL=http://localhost:8080 npm run build
+
+# Back-end: gera o JAR executável em backend/target
+cd ../backend
+./mvnw clean package
+```
+
+2. **Configuração do ambiente:** defina as variáveis de [`backend/.env`](#1-back-end-spring-boot) no provedor escolhido. Em um domínio real, `VITE_API_URL` deve apontar para o back-end, e `CORS_ORIGENS` deve conter o endereço do front-end.
+
+3. **Execução:**
+
+```bash
+# Back-end
+cd backend
+java -jar target/aluguel-carros-1.0.0.jar
+
+# Front-end, em outro terminal
+cd frontend
+npm run preview -- --port 5173
+```
 
 ---
 
@@ -295,6 +380,8 @@ Todas as rotas exigem o cabeçalho `Authorization: Bearer <token>`, exceto as ma
 
 ## 🎥 Demonstração
 
+### 🌐 Aplicação Web
+
 As telas abaixo usam dados fictícios.
 
 | Login | Cadastro |
@@ -315,9 +402,52 @@ As telas abaixo usam dados fictícios.
 
 ---
 
+### 💻 Exemplo de Saída no Terminal
+
+#### 1. Demonstração da API (Exemplo com cURL)
+
+Login de um cliente:
+
+```bash
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"login":"maria","senha":"senha12345"}'
+```
+
+Resposta, com o token abreviado:
+
+```json
+{
+  "token": "eyJhbGciOiJIUzM4NCJ9...",
+  "usuario": {
+    "id": 2,
+    "login": "maria",
+    "nome": "Maria Exemplo",
+    "papel": "CLIENTE",
+    "tipoAgente": null
+  }
+}
+```
+
+Acesso sem login:
+
+```bash
+curl http://localhost:8080/api/pedidos
+```
+
+Resposta, com o status HTTP 401:
+
+```json
+{"mensagem":"Faça login para continuar","campos":{}}
+```
+
+---
+
 ## 🧪 Testes
 
-Os testes percorrem a API completa, com um banco H2 em memória. Eles não acessam o Supabase.
+### Testes Unitários e de Integração
+
+Os testes percorrem a API completa, com um banco H2 em memória, e não acessam o Supabase.
 
 ```bash
 cd backend
@@ -326,37 +456,51 @@ cd backend
 
 São 38 testes de autenticação, permissões, CRUD de cliente, automóveis, pedidos, contratos e crédito.
 
+*Ferramentas utilizadas: JUnit 5, MockMvc e H2.*
+
+### Testes End-to-End (E2E)
+
+O repositório não inclui uma suíte E2E automatizada.
+
 ---
 
 ## 🔗 Documentações utilizadas
 
-- [Spring Boot](https://docs.spring.io/spring-boot/)
-- [Spring Security](https://docs.spring.io/spring-security/reference/)
-- [React](https://react.dev/)
-- [Vite](https://vite.dev/)
-- [Supabase](https://supabase.com/docs)
-- [Flyway](https://documentation.red-gate.com/flyway)
-- [PlantUML](https://plantuml.com/)
+- 📖 **Front-end:** [Documentação oficial do **React**](https://react.dev/)
+- 📖 **Build Tool:** [Documentação do **Vite**](https://vite.dev/)
+- 📖 **Back-end:** [Documentação oficial do **Spring Boot**](https://docs.spring.io/spring-boot/)
+- 📖 **Segurança:** [Documentação do **Spring Security**](https://docs.spring.io/spring-security/reference/)
+- 📖 **Banco de dados:** [Documentação do **Supabase**](https://supabase.com/docs)
+- 📖 **Migrações:** [Documentação do **Flyway**](https://documentation.red-gate.com/flyway)
+- 📖 **Diagramas:** [Documentação do **PlantUML**](https://plantuml.com/)
+- 📖 **Guia de estilo:** [**Conventional Commits**](https://www.conventionalcommits.org/pt-br/v1.0.0/)
 
 ---
 
 ## 👥 Autores
 
-| Nome | GitHub |
-| :--- | :--- |
-| Plínio Ângelo Ferreira | [@afplinio](https://github.com/afplinio) |
+| 👤 Nome | 🖼️ Foto | :octocat: GitHub |
+| :--- | :---: | :---: |
+| Plínio Ângelo Ferreira | <img src="https://github.com/afplinio.png" alt="Foto de Plínio Ângelo Ferreira" width="70px" height="70px"> | [@afplinio](https://github.com/afplinio) |
 
 ---
 
 ## 🤝 Contribuição
 
-Este é um projeto acadêmico. Sugestões podem ser enviadas por meio de [issues](https://github.com/afplinio/diaw-laboratorio-2/issues).
+Este é um projeto acadêmico. Para sugerir uma melhoria:
+
+1. Faça um `fork` do projeto.
+2. Crie uma branch para sua feature (`git checkout -b feature/minha-feature`).
+3. Faça o commit das mudanças (`git commit -m 'feat: adiciona nova funcionalidade'`), usando [Conventional Commits](https://www.conventionalcommits.org/pt-br/v1.0.0/).
+4. Faça o `push` para a branch (`git push origin feature/minha-feature`).
+5. Abra um **Pull Request (PR)**.
 
 ---
 
 ## 🙏 Agradecimentos
 
-Ao professor João Paulo Carneiro Aramuni e à PUC Minas, pela proposta do laboratório e pelo template deste README.
+- [**Engenharia de Software PUC Minas**](https://www.instagram.com/engsoftwarepucminas/): pela estrutura acadêmica e pela proposta do laboratório.
+- [**Prof. João Paulo Aramuni**](https://github.com/joaopauloaramuni): pela orientação na disciplina e pelo template deste README.
 
 ---
 
