@@ -14,7 +14,8 @@ public record ClienteRequest(
         String login,
 
         @NotBlank(message = "Informe a senha")
-        @Size(min = 8, max = 72, message = "A senha deve ter de 8 a 72 caracteres")
+        @Size(min = 8, message = "A senha deve ter no mínimo 8 caracteres")
+        @Size(max = 72, message = "A senha é muito longa")
         String senha,
 
         @NotBlank(message = "Informe o RG")

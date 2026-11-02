@@ -63,7 +63,7 @@ export default function CadastroPage() {
           <Campo rotulo="Usuário" erro={erros.login}>
             <input value={conta.login} onChange={(e) => setConta({ ...conta, login: e.target.value })} autoComplete="username" required />
           </Campo>
-          <Campo rotulo="Senha" erro={erros.senha} dica="De 8 a 72 caracteres.">
+          <Campo rotulo="Senha" erro={erros.senha} dica="Mínimo de 8 caracteres.">
             <input type="password" value={conta.senha} onChange={(e) => setConta({ ...conta, senha: e.target.value })} autoComplete="new-password" minLength={8} maxLength={72} required />
           </Campo>
         </div>

@@ -95,7 +95,7 @@ tbody tr:last-child td { border-bottom: 0; }
 
 /* Formulários */
 .formulario { display: grid; gap: 14px; max-width: 760px; }
-.campo { display: grid; gap: 4px; min-width: 0; }
+.campo { display: grid; align-content: start; gap: 4px; min-width: 0; }
 .campo-rotulo { font-size: .875rem; font-weight: 600; }
 .campo-dica { font-size: .8rem; color: var(--texto-suave); }
 .campo-erro { font-size: .8rem; color: var(--perigo); margin: 0; }

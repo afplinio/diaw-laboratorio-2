@@ -8,7 +8,8 @@ import java.util.List;
 import org.hibernate.validator.constraints.br.CPF;
 
 public record ClienteUpdateRequest(
-        @Size(min = 8, max = 72, message = "A senha deve ter de 8 a 72 caracteres")
+        @Size(min = 8, message = "A senha deve ter no mínimo 8 caracteres")
+        @Size(max = 72, message = "A senha é muito longa")
         String novaSenha,
 
         @NotBlank(message = "Informe o RG")
