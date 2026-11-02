@@ -3,6 +3,7 @@ import Layout from './components/Layout.jsx'
 import { Carregando } from './components/ui.jsx'
 import { useAuth } from './context/AuthContext.jsx'
 import CadastroPage from './pages/CadastroPage.jsx'
+import ClientesPage from './pages/ClientesPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import PedidosPage from './pages/PedidosPage.jsx'
 import PerfilPage from './pages/PerfilPage.jsx'
@@ -36,6 +37,7 @@ export default function App() {
             <Route path="/perfil" element={<PerfilPage />} />
           </Route>
           <Route element={<Protegida papel="AGENTE" />}>
+            <Route path="/clientes" element={<ClientesPage />} />
           </Route>
         </Route>
       </Route>
