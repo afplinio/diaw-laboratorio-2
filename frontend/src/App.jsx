@@ -5,6 +5,7 @@ import { useAuth } from './context/AuthContext.jsx'
 import AutomoveisPage from './pages/AutomoveisPage.jsx'
 import CadastroPage from './pages/CadastroPage.jsx'
 import ClientesPage from './pages/ClientesPage.jsx'
+import ContratosPage from './pages/ContratosPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import PedidoDetalhePage from './pages/PedidoDetalhePage.jsx'
 import PedidoFormPage from './pages/PedidoFormPage.jsx'
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="/pedidos" element={<PedidosPage />} />
           <Route path="/pedidos/:id" element={<PedidoDetalhePage />} />
           <Route path="/pedidos/:id/editar" element={<PedidoFormPage />} />
+          <Route path="/contratos" element={<ContratosPage />} />
           <Route element={<Protegida papel="CLIENTE" />}>
             <Route path="/pedidos/novo" element={<PedidoFormPage />} />
             <Route path="/perfil" element={<PerfilPage />} />

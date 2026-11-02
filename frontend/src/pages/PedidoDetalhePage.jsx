@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../api/client.js'
 import AvaliacaoForm from '../components/AvaliacaoForm.jsx'
+import ContratoForm from '../components/ContratoForm.jsx'
 import { Alerta, Cabecalho, Carregando, StatusPedido } from '../components/ui.jsx'
 import { useCarregar } from '../components/useCarregar.js'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -63,6 +64,7 @@ export default function PedidoDetalhePage() {
       </section>
 
       {isAgente && emAnalise && <AvaliacaoForm pedidoId={pedido.id} aoConcluir={recarregar} />}
+      {isAgente && aprovado && <ContratoForm pedido={pedido} aoConcluir={recarregar} />}
     </>
   )
 }
