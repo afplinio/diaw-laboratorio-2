@@ -5,6 +5,7 @@ import { useAuth } from './context/AuthContext.jsx'
 import CadastroPage from './pages/CadastroPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import PedidosPage from './pages/PedidosPage.jsx'
+import PerfilPage from './pages/PerfilPage.jsx'
 
 function Protegida({ papel }) {
   const { usuario, carregando } = useAuth()
@@ -32,6 +33,7 @@ export default function App() {
           <Route index element={<Navigate to="/pedidos" replace />} />
           <Route path="/pedidos" element={<PedidosPage />} />
           <Route element={<Protegida papel="CLIENTE" />}>
+            <Route path="/perfil" element={<PerfilPage />} />
           </Route>
           <Route element={<Protegida papel="AGENTE" />}>
           </Route>
